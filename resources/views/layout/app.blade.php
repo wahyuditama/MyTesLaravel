@@ -154,6 +154,20 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     @include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@9"])
-
+    <script>
+        // let button = document.querySelector('.add-row');
+        $('.add-row').click(function(e){
+            e.preventDefault();
+            let newRow = "";
+            newRow += "<tr>";
+                newRow += "<td> Tes 1</td>";
+                newRow += "<td> Tes 2</td>";
+                newRow += "<td> Tes 3</td>";
+                newRow += "<td> Tes 4</td>";
+            newRow += "</tr>";
+            let tbody = $('.tbody-parent');
+            tbody.append(newRow);
+        });
+    </script>
   </body>
 </html>
