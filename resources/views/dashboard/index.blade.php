@@ -8,7 +8,7 @@
                 <a href=""><img src="https://cdn.worldvectorlogo.com/logos/laravel-2.svg" width="40" alt=""></a>
             </div>
             <div class="card-body">
-                <h4 class="text-center">My Laundry With Laravel</h4>
+                <h4 class="text-center" style="font-family:Edu AU VIC WA NT Pre">My Laundry With Laravel</h4>
             </div>
         </div>
     </div>

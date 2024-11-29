@@ -55,7 +55,10 @@
 
     <link rel="stylesheet" href="{{ asset('assets/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
-    <!-- Page CSS -->
+    <!-- google font CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Pre:wght@400..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 
     <!-- Helpers -->
     <script src="{{ asset('assets/assets/vendor/js/helpers.js') }}"></script>
@@ -155,18 +158,57 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     @include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@9"])
     <script>
+        $('#id_paket').change(function(){
+            let id_paket = $(this).val();
+            $.ajax({
+                url: '/get-paket/' + id_paket,
+                type: 'GET',
+               dataType: 'json',
+               success: function(data){
+                $('#price').val(data.price)
+               }
+            });
+        });
         // let button = document.querySelector('.add-row');
         $('.add-row').click(function(e){
             e.preventDefault();
+            let nama_paket = $('#id_paket').find('option:selected').text(),
+            id_paket = $('#id_paket').val(),
+            harga = $('#price').val(),
+            qty = $('.qty').val(),
+            subtotal = parseInt(harga) * parseInt(qty);
+
+            if (id_paket == "") {
+                alert ('Mohon Isi Data Laundry Lebih Dulu');
+                return false
+            }
+
+            if (qty == "") {
+                alert ('Mohon Isi Qty Laundry Lebih Dulu');
+                return false
+            }
+            // let formattedHarga = new Intl.NumberFormat('id-ID').format(harga); // untuk format harga
             let newRow = "";
             newRow += "<tr>";
-                newRow += "<td> Tes 1</td>";
-                newRow += "<td> Tes 2</td>";
-                newRow += "<td> Tes 3</td>";
-                newRow += "<td> Tes 4</td>";
+                newRow += "<td>" + nama_paket + "<input type='hidden' name='id_paket[]' id='id_paket' class='form-control id_paket' value = '" + id_paket + "'></td>";
+                newRow += "<td>" + harga + "<input type='hidden' name='price_service[]' value='" + harga + "'></td>";
+                newRow += "<td>" + qty + "<input type='hidden' name='qty[]' id='qty' value='" + qty + "'></td>";
+                newRow += "<td>" + subtotal + "<input type='hidden' name='subtotal[]' id='subtotal' class='form-control subtotal' value = '" + subtotal + "'></td>";
             newRow += "</tr>";
             let tbody = $('.tbody-parent');
             tbody.append(newRow);
+            // Mencari nilai total
+
+            let total = 0;
+            $('.subtotal').each(function(){
+                let totalHarga = parseFloat($(this).val()) || 0;
+                total += totalHarga;
+            });
+
+            $('.total-harga').val(total);
+            $('#id_paket').val('');
+            $('#qty').val('');
+
         });
     </script>
   </body>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Customer;
+use App\Models\OrderDetail;
 use App\Models\Service;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -29,8 +30,8 @@ class TransOrderController extends Controller
     {
         //
         $title = 'Tambah Transaksi';
-        $oder = Order::get()->last();
-        $ide_order = $oder->id ?? '';
+        $order = Order::get()->last();
+        $ide_order = $order->id ?? '';
         $ide_order++;
         $order_code = "L" . date('Y-m-d') . sprintf(`%03s %04s`, $ide_order);
         $customers = Customer::get();
@@ -44,14 +45,24 @@ class TransOrderController extends Controller
     public function store(Request $request)
     {
         //
-        order::create([
-            "order_name" => $request->order_name,
-            "phone" => $request->phone,
-            "adress" => $request->adress
-        ]);
+        $order = Order::create($request->all());
+        foreach ($request->id_paket as $key => $val) {
+            OrderDetail::create([
+                'id_order' => $order->id,
+                'id_service' => $request->id_paket[$key],
+                'price_service' => $request->price_service[$key],
+                'qty' => $request->qty[$key],
+                'subtotal' => $request->subtotal[$key]
+            ]);
+        }
         Alert::success('Berhasil Broo', 'Data Berhasil Ditambah');
 
-        return redirect()->to('order');
+        return redirect()->to('trans_order');
+        // order::create([
+        //     "order_name" => $request->order_name,
+        //     "phone" => $request->phone,
+        //     "adress" => $request->adress
+        // ]);
     }
 
     /**
@@ -97,12 +108,19 @@ class TransOrderController extends Controller
         //
         $order = order::find($id)->delete();
         Alert::success('Berhasil Broo', 'Data Berhasil Dihapus');
-        return redirect()->to("order");
+        return redirect()->to("trans_order");
     }
 
     public function delete($id)
     {
         $porder = service::find($id)->delete();
         return redirect()->to("paket");
+    }
+
+    public function getPaket($id_paket)
+    {
+        // $paket = service::where("id", $id_paket)->first(); // Cara Pertama
+        $paket = Service::find($id_paket); // Cara kedua
+        return response()->json($paket);
     }
 }
